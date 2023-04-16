@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="shadow col-md-6">
+            <h3 class="mt-5"> Add Expense</h3>
+            <form action="/addview" method="POST">
+                <div class="form-group">
+                    <label for="date">Expense Date</label>
+                    <input type="date" class="form-control" name="date" id="date">
+                </div>
+                <div class="form-group">
+                    <label for="name">Expense Name</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name of Expense">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Expense Amount</label>
+                    <input type="text" class="form-control" name="amount" placeholder="Enter Amount Spent">
+                </div>
+                <div class="form-group">
+                    <label for="category">Expense category</label>
+                    <select class="form-control" name="category" id="category">
+                        <option>Household</option>
+                        <option>Entertainment</option>
+                        <option>Education</option>
+                        <option>Health</option>
+                        <option>Eat Outside</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Add</button>
+            </form>
+        </div>
+
+    </div>
+    <h3 class="mt-5"> Expenses </h3>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow bg-primary mb-1 rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">Date</div>
+                        <div class="col-md-2">Name</div>
+                        <div class="col-md-2">Amount</div>
+                        <div class="col-md-2">Category</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for expense in expenses %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">{{expense.date}}</div>
+                        <div class="col-md-2">{{expense.name}}</div>
+                        <div class="col-md-2">{{expense.amount}}/-</div>
+                        <div class="col-md-2">
+                            <span class="badge badge-success">{{expense.category}}</span>
+                        </div>
+                        <div class="col-md-2"><a href="updateexpense/{{expense.id}}"
+                                class="btn btn-sm btn-warning">Edit</a>
+                        </div>
+                        <div class="col-md-2"><a href="delete/{{expense.id}}" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="mt-5">Expense Breakdown</h3>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Household</div>
+                        <div id="thousehold" class="col-md-6">{{t_household}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Entertainment</div>
+                        <div id="tentertainment" class="col-md-6">{{t_entertainment}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Education</div>
+                        <div id="teducation" class="col-md-6">{{t_education}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Health</div>
+                        <div id="thealth" class="col-md-6">{{t_health}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Eat Outside</div>
+                        <div id="teat" class="col-md-6">{{t_eat}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Other</div>
+                        <div id="tother" class="col-md-6">{{t_other}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-2 bg-white rounded">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">Total</div>
+                        <div id="total" class="col-md-6">{{total}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h3 class="mt-5">Expense Breakdown</h3>
+            <canvas id="myChart" width="400" height="400"></canvas>
+            <script>
+                let household = document.getElementById('thousehold').innerHTML
+                let entertainment = document.getElementById('tentertainment').innerHTML
+                let education = document.getElementById('teducation').innerHTML
+                let health = document.getElementById('thealth').innerHTML
+                let eat = document.getElementById('teat').innerHTML
+                let other = document.getElementById('tother').innerHTML
+                let total = document.getElementById('total').innerHTML
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Household', 'Entertainment', 'Education', 'Health', 'Eat Outside', 'Other'],
+                        datasets: [{
+                            label: 'Amount',
+                            data: [household, entertainment, education, health, eat, other],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
